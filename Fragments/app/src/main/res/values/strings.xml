@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Fragments</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title">Route title</string>
+    <string name="desc">Route description</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="reset">Reset</string>
+    <string name="timer">timer</string>
+    <string name="save_time">Save time</string>
+    <string name="last_time_s">Last time: %d:%02d:%02d</string>
+    <string name="avg_time_s">Average time: %d:%02d:%02d</string>
+    <string name="min_time_s">Minimum time: %d:%02d:%02d</string>
+    <string name="max_time_s">Maximum time: %d:%02d:%02d</string>
+    <string name="last_time">Last time:</string>
+    <string name="average_time">Average time:</string>
+    <string name="minimum_time">Minimum time:</string>
+    <string name="maximum_time">Maximum time:</string>
+</resources>
