@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/remove_marker_item"
+        android:title="Remove marker"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/outline_highlight_off_24" />
+
+</menu>

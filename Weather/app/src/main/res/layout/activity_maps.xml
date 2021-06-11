@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="6"
@@ -23,33 +23,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context=".MapsActivity" />
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:background="@android:color/white"
-            android:orientation="horizontal"
-            android:id="@+id/text_layout"
-            android:visibility="gone"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <TextView
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="25dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="lol kek test" />
+                android:onClick="showList"
+                android:src="@drawable/outline_info_24"
+                android:contentDescription="@string/add_fab" />
+        </RelativeLayout>
 
-        </LinearLayout>
+        <include
+            layout="@layout/city_list_element"
+            android:id="@+id/map_city_info"
+            android:visibility="gone"/>
 
     </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="25dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="showList"
-        android:contentDescription="@string/add_fab" />
 
 </RelativeLayout>
