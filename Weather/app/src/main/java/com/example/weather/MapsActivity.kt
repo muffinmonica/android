@@ -24,6 +24,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     private var location: LatLng? = null;
     private lateinit var cityInfo: RelativeLayout;
+    private lateinit var dbHelper: DBHelper;
+    private lateinit var city: City;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this);
         cityInfo = findViewById(R.id.map_city_info);
+
+        dbHelper = DBHelper(this);
+        dbHelper.getCityList(this);
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -77,18 +82,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             marker?.remove();
             marker = mMap.addMarker(MarkerOptions().position(it));
 
-            var map: Map<String, String>;
             Thread() {
                 run {
-                    map = Response.getLocationMap(it, this);
+                    city = Response.getCity(it, this);
                 }
                 runOnUiThread {
                     cityInfo.visibility = View.VISIBLE;
-                    cityInfo.findViewById<TextView>(R.id.wind_speed_text).text = "${map["wind_speed"]} m/s";
-                    cityInfo.findViewById<TextView>(R.id.temp_text).text = "${map["temp"]} °C";
-                    cityInfo.findViewById<TextView>(R.id.location_text).text = "${map["location"]}";
+                    cityInfo.findViewById<TextView>(R.id.wind_speed_text).text = "${city.windSpeed} m/s";
+                    cityInfo.findViewById<TextView>(R.id.temp_text).text = "${city.temperature} °C";
+                    val displayName = if(city.cityName == "") city.getDisplayCoords() else city.cityName;
+                    cityInfo.findViewById<TextView>(R.id.location_text).text = "$displayName";
 
-                    val id = resources.getIdentifier("flag_${map["country_code"]!!.lowercase()}", "drawable", packageName);
+                    val id = resources.getIdentifier("flag_${city.countryCode.lowercase()}", "drawable", packageName);
                     cityInfo.findViewById<ImageView>(R.id.country_flag).setImageResource(id);
                 }
             }.start()
@@ -97,6 +102,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     fun showList(view: View) {
         location?.let {
+            val result = dbHelper.addCity(city);
+//            Toast.makeText(this, result.toString(), Toast.LENGTH_SHORT).show();
+
             val intent = Intent(this, CityListActivity::class.java);
             intent.putExtra("coords", location);
             startActivity(intent);
