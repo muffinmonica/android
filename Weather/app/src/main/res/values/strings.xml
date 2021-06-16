@@ -96,4 +96,5 @@
     <string name="loading_wind_speed">N/A m/s</string>
     <string name="loading_location">N/A</string>
     <string name="loading_temperature">N/A °C</string>
+    <string name="wind_speed_res">%.2f m/s</string>
 </resources>

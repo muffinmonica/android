@@ -2,34 +2,34 @@ package com.example.weather
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.RecoverySystem
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLng
 
 class CityListActivity : AppCompatActivity() {
     private lateinit var city: City;
     private lateinit var dbHelper: DBHelper;
+    private lateinit var cityList: ArrayList<City>;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_city_list);
         dbHelper = DBHelper(this);
 
+        val recyclerView = findViewById<RecyclerView>(R.id.city_list);
+        recyclerView.layoutManager = LinearLayoutManager(this);
+
         Thread {
             run {
-                val location = intent.extras!!["coords"] as LatLng;
-                city = dbHelper.getCity(location, this@CityListActivity);
+                cityList = dbHelper.getCityList(this);
             }
             runOnUiThread {
-                val listElem = findViewById<RelativeLayout>(R.id.city_list);
-                listElem.findViewById<TextView>(R.id.wind_speed_text).text = "${city.windSpeed} m/s";
-                listElem.findViewById<TextView>(R.id.temp_text).text = "${city.temperature} °C";
-                val displayName = if(city.cityName == "") city.getDisplayCoords() else city.cityName;
-                listElem.findViewById<TextView>(R.id.location_text).text = "$displayName";
-
-                val id = resources.getIdentifier("flag_${city.countryCode.lowercase()}", "drawable", packageName);
-                listElem.findViewById<ImageView>(R.id.country_flag).setImageResource(id);
+                val adapter = CityListAdapter(cityList, this)
+                recyclerView.adapter = adapter;
             }
         }.start()
     }

@@ -10,7 +10,7 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
 
     companion object {
         private const val DATABASE_NAME = "cities.db";
-        private const val DATABASE_VERSION = 5;
+        private const val DATABASE_VERSION = 6;
 
         private const val WEATHER_TABLE = "weather";
         private const val WEATHER_CITY_NAME = "city_name";
@@ -118,7 +118,7 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
             arrayOf("${coords.longitude}", "${coords.latitude}"))
     }
 
-    fun getCityList(context: Context): List<City> {
+    fun getCityList(context: Context): ArrayList<City> {
         val list = ArrayList<City>();
         val db = this.readableDatabase;
         val query = "select * from $WEATHER_TABLE";

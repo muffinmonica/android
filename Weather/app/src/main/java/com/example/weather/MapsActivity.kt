@@ -23,7 +23,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var marker: Marker? = null;
     private lateinit var binding: ActivityMapsBinding
     private var location: LatLng? = null;
-    private lateinit var cityInfo: RelativeLayout;
+    private lateinit var cityInfo: LinearLayout;
     private lateinit var dbHelper: DBHelper;
     private lateinit var city: City;
 
@@ -88,10 +88,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 runOnUiThread {
                     cityInfo.visibility = View.VISIBLE;
-                    cityInfo.findViewById<TextView>(R.id.wind_speed_text).text = "${city.windSpeed} m/s";
+                    cityInfo.findViewById<TextView>(R.id.wind_speed_text).text = getString(R.string.wind_speed_res).format(city.windSpeed);
                     cityInfo.findViewById<TextView>(R.id.temp_text).text = "${city.temperature} °C";
                     val displayName = if(city.cityName == "") city.getDisplayCoords() else city.cityName;
-                    cityInfo.findViewById<TextView>(R.id.location_text).text = "$displayName";
+                    cityInfo.findViewById<TextView>(R.id.location_text).text = displayName;
 
                     val id = resources.getIdentifier("flag_${city.countryCode.lowercase()}", "drawable", packageName);
                     cityInfo.findViewById<ImageView>(R.id.country_flag).setImageResource(id);
