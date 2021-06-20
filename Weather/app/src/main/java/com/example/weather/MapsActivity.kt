@@ -40,7 +40,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         cityInfo = findViewById(R.id.map_city_info);
 
         dbHelper = DBHelper(this);
-        dbHelper.getCityList(this);
+        Thread {
+            run {
+                dbHelper.getCityList(this);
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -73,12 +77,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
         val london = LatLng(51.51, -.11)
 //        mMap.addMarker(MarkerOptions().position(london).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(london))
         mMap.setOnMapClickListener {
-            location = it;
             marker?.remove();
             marker = mMap.addMarker(MarkerOptions().position(it));
 
@@ -87,10 +89,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     city = Response.getCity(it, this);
                 }
                 runOnUiThread {
+                    if(city.id == -1) {
+                        cityInfo.visibility = View.GONE;
+                        return@runOnUiThread;
+                    }
+                    location = it;
                     cityInfo.visibility = View.VISIBLE;
                     cityInfo.findViewById<TextView>(R.id.wind_speed_text).text = getString(R.string.wind_speed_res).format(city.windSpeed);
                     cityInfo.findViewById<TextView>(R.id.temp_text).text = "${city.temperature} °C";
-                    val displayName = if(city.cityName == "") city.getDisplayCoords() else city.cityName;
+                    val displayName = city.cityName;
                     cityInfo.findViewById<TextView>(R.id.location_text).text = displayName;
 
                     val id = resources.getIdentifier("flag_${city.countryCode.lowercase()}", "drawable", packageName);

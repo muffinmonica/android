@@ -36,7 +36,7 @@ class CityListAdapter(private val data: ArrayList<City>, private var context: Co
 
         holder.row.findViewById<TextView>(R.id.wind_speed_text).text = context.getString(R.string.wind_speed_res).format(city.windSpeed);
         holder.row.findViewById<TextView>(R.id.temp_text).text = "${city.temperature} °C";
-        val displayName = if(city.cityName == "") city.getDisplayCoords() else city.cityName;
+        val displayName = city.cityName;
         holder.row.findViewById<TextView>(R.id.location_text).text = "$displayName";
 
         val id = context.resources.getIdentifier("flag_${city.countryCode.lowercase()}", "drawable", context.packageName);
