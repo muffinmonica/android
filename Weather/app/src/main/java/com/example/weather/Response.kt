@@ -53,6 +53,8 @@ class Response {
             } catch(ex: JSONException) {
                 city.cityName = "";
             }
+
+            city.weather = jsonObject.getJSONArray("weather").getJSONObject(0)["main"] as String;
             return city;
         }
         public fun getCity(id: Int, context: Context): City {

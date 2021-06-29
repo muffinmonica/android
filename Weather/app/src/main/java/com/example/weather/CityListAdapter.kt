@@ -9,24 +9,40 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class CityListAdapter(private val data: ArrayList<City>, private var context: Context): RecyclerView.Adapter<CityListAdapter.ViewHolder>() {
+class CityListAdapter(private var data: ArrayList<City>, private val context: Context): RecyclerView.Adapter<CityListAdapter.ViewHolder>() {
 
+    fun updateData() {
+        data = dbHelper.getCityList(context, true);
+    }
+
+    private lateinit var dbHelper: DBHelper;
     private var mClickListener: ItemClickListener? = null;
 
-    inner class ViewHolder(var row: View): RecyclerView.ViewHolder(row), View.OnClickListener{
+    inner class ViewHolder(var row: View): RecyclerView.ViewHolder(row), View.OnClickListener, View.OnLongClickListener {
 
         init {
             row.setOnClickListener(this);
+            row.setOnLongClickListener(this);
         }
 
         override fun onClick(v: View?) {
-            mClickListener?.onItemClick(v, adapterPosition);
+//            mClickListener?.onItemClick(v, adapterPosition);
         }
+
+        override fun onLongClick(v: View?): Boolean {
+            mClickListener?.onItemClick(v, adapterPosition);
+            return true
+        }
+    }
+
+    fun setClickListener(itemClickListener: ItemClickListener) {
+        mClickListener = itemClickListener;
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.city_list_element, parent, false);
+        dbHelper = DBHelper(context);
 
         return ViewHolder(view);
     }
@@ -38,6 +54,7 @@ class CityListAdapter(private val data: ArrayList<City>, private var context: Co
         holder.row.findViewById<TextView>(R.id.temp_text).text = "${city.temperature} °C";
         val displayName = city.cityName;
         holder.row.findViewById<TextView>(R.id.location_text).text = "$displayName";
+        holder.row.findViewById<ImageView>(R.id.weather_img).setImageResource(city.getWeatherIcon(context));
 
         val id = context.resources.getIdentifier("flag_${city.countryCode.lowercase()}", "drawable", context.packageName);
         holder.row.findViewById<ImageView>(R.id.country_flag).setImageResource(id);

@@ -31,8 +31,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="showList"
-                android:src="@drawable/outline_info_24"
+                android:src="@drawable/outline_add_24"
                 android:contentDescription="@string/add_fab" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/gps_fab"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/outline_my_location_24"
+                android:contentDescription="GPS" />
         </RelativeLayout>
 
         <include

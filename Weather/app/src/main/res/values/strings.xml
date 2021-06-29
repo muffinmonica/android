@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Weather</string>
+    <string name="app_name">Weather List</string>
     <string name="title_activity_maps">Map</string>
     <string name="add_fab">Add</string>
     <string name="title_activity_weather_list">ScrollingActivity</string>
@@ -97,4 +97,6 @@
     <string name="loading_location">N/A</string>
     <string name="loading_temperature">N/A °C</string>
     <string name="wind_speed_res">%.2f m/s</string>
+    <string name="remove_marker_menu_item">Remove marker</string>
+    <string name="show_list_menu_list">Show list</string>
 </resources>

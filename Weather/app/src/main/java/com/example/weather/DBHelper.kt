@@ -12,7 +12,7 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
 
     companion object {
         private const val DATABASE_NAME = "cities.db";
-        private const val DATABASE_VERSION = 14;
+        private const val DATABASE_VERSION = 17;
 
         private const val WEATHER_TABLE = "weather";
         private const val WEATHER_ID = "id";
@@ -20,7 +20,7 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
         private const val WEATHER_COUNTRY_CODE = "country_code";
         private const val WEATHER_TEMPERATURE = "temperature";
         private const val WEATHER_WIND_SPEED = "wind_speed";
-        // TODO add weather
+        private const val WEATHER_WEATHER = "weather";
         // TODO add probably direction
 
         private const val UPDATE_TABLE = "update_table";
@@ -37,6 +37,7 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
                 "$WEATHER_COUNTRY_CODE text," +
                 "$WEATHER_TEMPERATURE integer," +
                 "$WEATHER_WIND_SPEED real," +
+                "$WEATHER_WEATHER text," +
                 "primary key($WEATHER_ID)" +
                 ")")
         db.execSQL("create table $UPDATE_TABLE (" +
@@ -53,6 +54,13 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
         onCreate(db);
     }
 
+    fun removeCity(city: City): Boolean {
+        val db = this.writableDatabase;
+        val a = db.delete(WEATHER_TABLE, "$WEATHER_ID = ?", arrayOf(city.id.toString())) > 0;
+        val b = db.delete(UPDATE_TABLE, "$UPDATE_ID = ?", arrayOf(city.id.toString())) > 0;
+        return a && b;
+    }
+
     fun addCity(city: City): Long {
         val db = this.writableDatabase;
         val values = ContentValues();
@@ -61,6 +69,7 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
         values.put(WEATHER_COUNTRY_CODE, city.countryCode);
         values.put(WEATHER_TEMPERATURE, city.temperature);
         values.put(WEATHER_WIND_SPEED, city.windSpeed);
+        values.put(WEATHER_WEATHER, city.weather);
 
         val result = db.insert(WEATHER_TABLE, null, values);
 
@@ -107,6 +116,7 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
             city.countryCode = result.getString(result.getColumnIndex(WEATHER_COUNTRY_CODE));
             city.temperature = result.getInt(result.getColumnIndex(WEATHER_TEMPERATURE));
             city.windSpeed = result.getDouble(result.getColumnIndex(WEATHER_WIND_SPEED));
+            city.weather = result.getString(result.getColumnIndex(WEATHER_WEATHER));
         }
         result.close();
         db.close();
@@ -137,15 +147,15 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
             null);
     }
 
-    fun updateAll(context: Context) {
+    fun updateAll(context: Context, forceUpdate: Boolean = false) {
         var db = this.readableDatabase;
-        val query = "select * from $UPDATE_TABLE where $UPDATE_WHEN_ADDED + $UPDATE_DELAY < ${System.currentTimeMillis() / 1000}";
+        val query = "select * from $UPDATE_TABLE"; // where $UPDATE_WHEN_ADDED + $UPDATE_DELAY < ${System.currentTimeMillis() / 1000}
         val result = db.rawQuery(query, null);
         val list = ArrayList<Int>();
         if(result.moveToFirst()) {
             do {
                 val time = result.getInt(result.getColumnIndex(UPDATE_WHEN_ADDED));
-                if(System.currentTimeMillis() > time + UPDATE_DELAY) {
+                if(forceUpdate || (System.currentTimeMillis() / 1000 > time + UPDATE_DELAY)) {
                     val id = result.getInt(result.getColumnIndex(UPDATE_ID));
                     list.add(id);
                 }
@@ -161,8 +171,8 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
         db.close();
     }
 
-    fun getCityList(context: Context): ArrayList<City> {
-        updateAll(context);
+    fun getCityList(context: Context, forceUpdate: Boolean = false): ArrayList<City> {
+        updateAll(context, forceUpdate);
         val list = ArrayList<City>();
         val db = this.readableDatabase;
         val query = "select * from $WEATHER_TABLE";
@@ -175,6 +185,7 @@ class DBHelper(var context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
                 city.countryCode = result.getString(result.getColumnIndex(WEATHER_COUNTRY_CODE));
                 city.temperature = result.getInt(result.getColumnIndex(WEATHER_TEMPERATURE));
                 city.windSpeed = result.getDouble(result.getColumnIndex(WEATHER_WIND_SPEED));
+                city.weather = result.getString(result.getColumnIndex(WEATHER_WEATHER));
                 list.add(city);
             } while(result.moveToNext())
         }

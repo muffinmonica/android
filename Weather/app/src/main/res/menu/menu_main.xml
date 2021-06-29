@@ -4,8 +4,12 @@
 
     <item
         android:id="@+id/remove_marker_item"
-        android:title="Remove marker"
+        android:title="@string/remove_marker_menu_item"
         app:showAsAction="ifRoom"
         android:icon="@drawable/outline_highlight_off_24" />
+    <item
+        android:id="@+id/show_list_item"
+        android:title="@string/show_list_menu_list"
+        app:showAsAction="never" />
 
 </menu>
