@@ -100,6 +100,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 //        mMap.addMarker(MarkerOptions().position(london).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(london))
         mMap.setOnMapClickListener {
+            if(!Response.isOnline(this)) {
+                Toast.makeText(this, "No network found", Toast.LENGTH_SHORT).show();
+                return@setOnMapClickListener;
+            }
             marker?.remove();
             marker = mMap.addMarker(MarkerOptions().position(it));
 
@@ -128,7 +132,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         }
     }
 
-    fun showList(view: View) {
+    fun addCity(view: View) {
         location?.let {
             val result = dbHelper.addCity(city);
 //            Toast.makeText(this, result.toString(), Toast.LENGTH_SHORT).show();
