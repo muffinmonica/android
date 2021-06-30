@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.io.Serializable
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
@@ -59,6 +60,40 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         gpsFab.setOnClickListener {
             getLocation();
         }
+
+        if(savedInstanceState != null) {
+            location = LatLng(savedInstanceState.getDouble("lat"), savedInstanceState.getDouble("lon"));
+            Thread() {
+                run {
+                    city = Response.getCity(location!!, this);
+                }
+                runOnUiThread {
+                    if(city.id == 0) {
+                        cityInfo.visibility = View.GONE;
+                        location = null;
+                        return@runOnUiThread;
+                    }
+                    marker?.remove();
+                    marker = mMap.addMarker(MarkerOptions().position(location!!));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+                    cityInfo.visibility = View.VISIBLE;
+                    cityInfo.findViewById<TextView>(R.id.wind_speed_text).text = getString(R.string.wind_speed_res).format(city.windSpeed);
+                    cityInfo.findViewById<TextView>(R.id.temp_text).text = "${city.temperature} °C";
+                    cityInfo.findViewById<ImageView>(R.id.weather_img).setImageResource(city.getWeatherIcon(this));
+                    val displayName = city.cityName;
+                    cityInfo.findViewById<TextView>(R.id.location_text).text = displayName;
+
+                    val id = resources.getIdentifier("flag_${city.countryCode.lowercase()}", "drawable", packageName);
+                    cityInfo.findViewById<ImageView>(R.id.country_flag).setImageResource(id);
+                }
+            }.start()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putDouble("lat", location!!.latitude);
+        outState.putDouble("lon", location!!.longitude);
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
